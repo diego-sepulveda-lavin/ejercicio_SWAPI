@@ -210,6 +210,51 @@ def delete_user_favorite(user_id):
 
     return jsonify({"msg":"Favorito eliminado exitosamente"}),201
 
+#DELETE PEOPLE, PLANET, VEHICLE BY ID
+@app.route('/people/<int:delete_id>', methods=['DELETE'])
+def delete_char_by_id(delete_id):
+    char_to_delete = Characters.query.get(delete_id)
+    if not char_to_delete:
+        return jsonify({"msg":"Char id incorrecto"})
+    
+    db.session.delete(char_to_delete)
+    db.session.commit()
+
+    return jsonify({"msg":"Char eliminado exitosamente"}),201
+
+@app.route('/planets/<int:delete_id>', methods=['DELETE'])
+def delete_planet_by_id(delete_id):
+    planet_to_delete = Planet.query.get(delete_id)
+    if not planet_to_delete:
+        return jsonify({"msg":"Planet id incorrecto"})
+    
+    db.session.delete(planet_to_delete)
+    db.session.commit()
+
+    return jsonify({"msg":"Planet eliminado exitosamente"}),201
+
+@app.route('/vehicles/<int:delete_id>', methods=['DELETE'])
+def delete_vehicle_by_id(delete_id):
+    vehicle_to_delete = Vehicle.query.get(delete_id)
+    if not vehicle_to_delete:
+        return jsonify({"msg":"Vehicle id incorrecto"})
+    
+    db.session.delete(vehicle_to_delete)
+    db.session.commit()
+
+    return jsonify({"msg":"Vehicle eliminado exitosamente"}),201
+
+#DELETE USER BY ID
+@app.route('/user/<int:delete_id>', methods=['DELETE'])
+def delete_user_by_id(delete_id):
+    user_to_delete = User.query.get(delete_id)
+    if not user_to_delete:
+        return jsonify({"msg":"User id incorrecto"})
+    
+    db.session.delete(user_to_delete)
+    db.session.commit()
+
+    return jsonify({"msg":"User eliminado exitosamente"}),201
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

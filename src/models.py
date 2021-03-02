@@ -11,9 +11,9 @@ class User(db.Model):
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
     first_name = db.Column(db.String(20)) 
     second_name = db.Column(db.String(20))
-    fav_characters = db.relationship("Favorites_Characters")
-    fav_planets = db.relationship("Favorites_Planets")
-    fav_vehicles = db.relationship("Favorites_Vehicles")
+    fav_characters = db.relationship("Favorites_Characters", cascade="all, delete")
+    fav_planets = db.relationship("Favorites_Planets", cascade="all, delete")
+    fav_vehicles = db.relationship("Favorites_Vehicles", cascade="all, delete")
 
     def __repr__(self):
         return '<User %r>' % self.email
@@ -22,7 +22,6 @@ class User(db.Model):
         return {
             "id": self.uid,
             "email": self.email,
-            # do not serialize the password, its a security breach
             "fav_characters": list(map(lambda fav_char: fav_char.serialize(),self.fav_characters)),
             "fav_planets": list(map(lambda fav_planet: fav_planet.serialize(),self.fav_planets)),
             "fav_vehicles": list(map(lambda fav_vehicle: fav_vehicle.serialize(), self.fav_vehicles))
@@ -50,11 +49,10 @@ class Characters(db.Model):
     created = db.Column(db.Date, default=datetime.datetime.now()) 
     edited = db.Column(db.Date, default=datetime.datetime.now()) 
     homeworld = db.Column(db.String(20))
-    like_by_users = db.relationship("Favorites_Characters", backref="character")
+    like_by_users = db.relationship("Favorites_Characters", backref="character", cascade="all, delete")
 
     def __repr__(self):
         return '<Character %r, %r>' % (self.uid, self.name)
-        #return f"<Character {self.uid} - {self.name}>"
         
 
     def serialize(self):
@@ -94,7 +92,7 @@ class Planet(db.Model):
     surface_water = db.Column(db.Integer)
     created = db.Column(db.Date, default=datetime.datetime.now())
     edited = db.Column(db.Date)
-    like_by_users = db.relationship("Favorites_Planets", backref="planet")
+    like_by_users = db.relationship("Favorites_Planets", backref="planet",cascade="all, delete")
 
     def __repr__(self):
         return '<Planet %r, %r>' % (self.uid, self.name)
@@ -119,7 +117,7 @@ class Planet(db.Model):
         return {
             "uid": self.uid,
             "name": self.name,
-            "url": f"https://3000-sapphire-felidae-jkwjegdk.ws-us03.gitpod.io/planet/{self.uid}"
+            "url": f"https://3000-sapphire-felidae-jkwjegdk.ws-us03.gitpod.io/planets/{self.uid}"
         }
 
 class Vehicle(db.Model):
@@ -141,7 +139,7 @@ class Vehicle(db.Model):
     pilots = db.Column(db.Integer) 
     created = db.Column(db.Date, default=datetime.datetime.now())
     edited = db.Column(db.Date)
-    like_by_users = db.relationship("Favorites_Vehicles", backref="vehicle")
+    like_by_users = db.relationship("Favorites_Vehicles", backref="vehicle", cascade="all, delete")
 
     def __repr__(self):
         return '<Vehicle %r, %r>' % (self.uid, self.name)
@@ -171,7 +169,7 @@ class Vehicle(db.Model):
         return {
             "uid": self.uid,
             "name": self.name,
-            "url": f"https://3000-sapphire-felidae-jkwjegdk.ws-us03.gitpod.io/vehicle/{self.uid}"
+            "url": f"https://3000-sapphire-felidae-jkwjegdk.ws-us03.gitpod.io/vehicles/{self.uid}"
         }
 
 class Favorites_Characters(db.Model):
@@ -182,6 +180,7 @@ class Favorites_Characters(db.Model):
 
     def serialize(self):
         return self.character.serialize2()
+    
 
 class Favorites_Vehicles(db.Model):
     __tablename__ = "favorites_vehicles"
